@@ -1,6 +1,5 @@
 from gc import isenabled
 import pyrebase
-import firebase as fb
 import streamlit as st
 import time
 import math
