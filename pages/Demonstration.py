@@ -1,5 +1,4 @@
 import streamlit as st
-import cv2
 import numpy as np
 import pyrebase
 
@@ -32,8 +31,6 @@ video_bytes = video_file.read()
 
 st.video(video_bytes)
 
-st.subheader("CHANGE MOVEMENT")
-
 def snake():
    
    data={"Model":"Snake"}
@@ -44,20 +41,3 @@ def random():
    print("hilo")
    db.child("Motion").update(data)
 
-
-st.subheader("CAMERA INPUT")
-
-img_file_buffer = st.camera_input("Take a picture")
-
-if img_file_buffer is not None:
-    # To read image file buffer with OpenCV:
-    bytes_data = img_file_buffer.getvalue()
-    cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
-
-    # Check the type of cv2_img:
-    # Should output: <class 'numpy.ndarray'>
-    st.write(type(cv2_img))
-
-    # Check the shape of cv2_img:
-    # Should output shape: (height, width, channels)
-    st.write(cv2_img.shape)
