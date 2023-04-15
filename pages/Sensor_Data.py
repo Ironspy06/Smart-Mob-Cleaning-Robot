@@ -1,8 +1,9 @@
 from gc import isenabled
 import pyrebase
+import firebase as fb
 import streamlit as st
-import base64
-
+import time
+import math
 config = {
   "apiKey": "AIzaSyCjULZ1FxzQHvMji5OR-OZnyOxY9KwV_GA",
   "authDomain": "robot-68d4d.firebaseapp.com",
@@ -17,67 +18,49 @@ config = {
 firebase=pyrebase.initialize_app(config)
 
 db=firebase.database()
-
-def get_base64(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def set_background(png_file):
-    bin_str = get_base64(png_file)
-    page_bg_img = '''
-    <style>
-    .stApp {
-    background-image: url("data:image/png;base64,%s");
-    background-size: contain;
-    background-position: center;
-    background-attachment: scroll;
-    background-repeat: no-repeat;
-    position:fixed;
-    height: auto;
-    
-    }
-
-    </style>
-    ''' % bin_str
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
-set_background("C:/Users/Pratik/OneDrive/Desktop/Project/My project.jpg")
-
-
 res=-1
 res1="Hello"
 check=-1
+check2=-1
 ans="a"
-col1, col2, col3,col4= st.columns(4)
+
+col1, col2, col3,col4,col5= st.columns([4,3,3,3,3])
 with col1:
-        st.header("IR Data")
-        
+        st.header("Edge")
+        text_placeholder1 = st.empty() 
 with col2:
-        st.header("SONAR")   
+        st.header("Distance") 
+        text_placeholder2 = st.empty() 
 with col3:
-        st.header("Motion")    
+        st.header("Motion")
+        text_placeholder3 = st.empty()  
 with col4:
+        st.header("Obstacle")  
+        text_placeholder4 = st.empty()
+with col5:
         st.header("Battery") 
+        text_placeholder5 = st.empty()
 
-
+# with col6:
+#          st.header("Area")
+#          text_placeholder6= st.empty()
 while True:
 
     with col1:
 
-        ir=db.child('Motion').child('IR').get()
+        ir=db.child('Motion').child('Edge').get()
         if ir.val()==1 and res1!="Edge Detected... Avoiding the edge":
-            st.write("Edge Detected... Avoiding the edge")
+            text_placeholder1.text("Edge Detected... Avoiding the edge")
             res1="Edge Detected... Avoiding the edge"
         elif ir.val()==0 and res1!="Edge not detected":
-            st.write("Edge not detected")
+            text_placeholder1.text("Edge not detected")
             res1="Edge not detected"
 
     with col2:
-        UltraSonic=db.child('Motion').child('US').get()
+        UltraSonic=db.child('Motion').child('Distance').get()
         
         if UltraSonic.val()!=res:
-           st.write(UltraSonic.val())
+           text_placeholder2.text(UltraSonic.val())
            res=UltraSonic.val()
 
 
@@ -86,30 +69,59 @@ while True:
         if orient.val()!=check:
     
             if orient.val()==0:
-                st.write("Stop")
+                text_placeholder3.text("Stop")
             elif orient.val()==1:
-                st.write("Forward")
+                text_placeholder3.text("Forward")
             elif orient.val()==2:
-                st.write("Backward")
+                text_placeholder3.text("Backward")
             elif orient.val()==3:
-                st.write("Left")
+                text_placeholder3.text("Left")
             elif orient.val()==4:
-                st.write("Right")
+                text_placeholder3.text("Right")
 
             check=orient.val()
 
 
     with col4:
+         obstacle=db.child('Motion').child('Obstacle').get()
+         if obstacle.val()!=check2:
+            if obstacle.val()==0:
+                   text_placeholder4.text("No Obstacle")
+            elif obstacle.val()==1:
+                    text_placeholder4.text("Obstacle Detected")
+            check2=obstacle.val()
+    with col5:
         battery=db.child('Motion').child('Battery').get()
         battery1=battery.val()/11.1
         if battery1*100>70 and ans!="High":
-            st.write("High")
+            text_placeholder5.text("High")
             ans="High"
         elif battery1*100==50 and ans!="Medium":
-            st.write("Medium")
+            text_placeholder5.text("Medium")
             ans="Medium"
         elif battery1*100<=20 and ans!="Battery Low, Charge the battery":
-            st.write("Battery Low, Charge the battery")
+            text_placeholder5.text("Battery Low, Charge the battery")
             ans="Battery Low, Charge the battery"
 
+    # with  col6:
+    #      velocity = [0, 0, 0]  # Initial velocity in x, y, z directions
+    #      position = [0, 0, 0]  # Initial position in x, y, z directions
+    #      last_time = time.time()
+    #      accel_x=float(db.child('Motion').child('Accelerometer').child('0').get().val())
+    #      accel_y=float(db.child('Motion').child('Accelerometer').child('1').get().val())
+    #      accel_z=float(db.child('Motion').child('Accelerometer').child('2').get().val())
+        
+    #     # Calculate total acceleration and update velocity and position
+    #      accel_total = math.sqrt(accel_x**2 + accel_y**2 + accel_z**2)
+    #      current_time = time.time()
+    #      delta_t = current_time - last_time
+    #      velocity[0] += accel_x * delta_t
+    #      velocity[1] += accel_y * delta_t
+    #      velocity[2] += accel_z * delta_t
+    #      position[0] += velocity[0] * delta_t
+    #      position[1] += velocity[1] * delta_t
+    #      position[2] += velocity[2] * delta_t
+         
+    #      last_time = current_time
 
+    #      text_placeholder6.text(f"Current position: x={position[0]}, y={position[1]}, z={position[2]}")

@@ -16,9 +16,9 @@ with col1:
 
 with col2:
 
-    image = Image.open('Shankar.jpeg')
+    image = Image.open('kunal1.jpeg')
     st.image(image,width=150)
-    st.write("Shankar Singh(ECE)")
-    image = Image.open('Sumanth.JPG')
+    st.write("Kunal B Yellurkar(CSE)")
+    image = Image.open('shakeel.jpg')
     st.image(image,width=150)
-    st.write("Sumanth Rao(ECE)")
+    st.write("Mohammed Shakeel(CSE)")
