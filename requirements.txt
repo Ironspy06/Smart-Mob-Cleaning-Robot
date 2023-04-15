@@ -1,9 +1,8 @@
 firebase==3.0.1
-firebase_admin==6.1.0
+firebase-admin==6.1.0
 matplotlib==3.5.2
 numpy==1.22.3
 Pillow==9.5.0
 Pyrebase==3.0.27
+opencv-python-headless==4.5.5.62
 streamlit==1.21.0
-~pencv_python==4.5.5.64
-~treamlit==1.10.0
